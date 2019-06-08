@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.25/webcam.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" />
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style type="text/css">
+        #results { padding:20px; border:1px solid; background:#ccc; }
+    </style>
+</head>
+<body>
+
+
+     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <a class="navbar-brand" href="#">GRAFFERSID</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarColor01">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/form/">Add Dish</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="/Upload/">Upload Image <span class="sr-only">(current)</span></a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+    <div class="container" style="margin-top: 50px">
+      <div class="jumbotron">
+      <h1 style="text-align:center">UPLOAD WEBCAM IMAGE FOR TESTING</h1>
+    </div>
+
+
+<div class="container">
+    <form id="new_image">
+        <div class="row">
+            <div class="col-md-6">
+                <div id="my_camera"></div>
+                <br/>
+                
+                <input type="hidden" name="image" class="image-tag">
+            </div>
+            <div class="col-md-6">
+                <div id="results">Your captured image will appear here...</div>
+            </div>
+            <div class="col-md-12 text-center">
+                <br/>
+                <input onclick="showAlert()" type="button" id="submit" class="btn btn-success" value="SUBMIT">
+            </div>
+        </div>
+    </form>
+</div>
+  <script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+<!-- Configure a few settings and attach camera -->
+<script language="JavaScript">
+  function showAlert() {
+    var myText = "Image Captured....Redirecting to home page to Analyse your Dish";
+    alert (myText);
+    window.location.href="/";
+  }
+  $(document).ready(function(){
+    Webcam.set({
+        width: 490,
+        height: 380,
+        image_format: 'jpg',
+        jpeg_quality: 90
+    });
+      
+  
+    Webcam.attach( '#my_camera' );
+    var hope;
+    var enc;  
+    var count = 0;
+    let imgArr = [];
+    var abcdefg=0;
+    function take_snapshot() {
+        var abcd=document.getElementById('results')
+        Webcam.snap( function(data_uri) {
+            $(".image-tag").val(data_uri);
+            abcd.innerHTML = '<img src="'+data_uri+'"/>';
+            hope=abcd.innerHTML = '<img src="'+data_uri+'"/>';
+            console.log(abcdefg+'.jpg');
+
+            //var random =Math.floor(Math.random() * (+max - +min)) + +min; 
+            imgArr.push(data_uri);
+            abcdefg ++;
+            console.log(imgArr);
+            console.log("MY NAME IS SHUBHAM PANDEY, I AM AN INTERN AT GRAFFERSID");
+        });
+    }
+    // $('#submit').click(function(){
+    //   $.post("http://127.0.0.1:8000/Upload/", {"files": JSON.stringify(imgArr)}, function(result){
+    //     console.log(result);
+    //   });
+    // })
+
+    var myVar = setInterval(function(){
+      console.log(count);
+      if(count==3){
+        clearInterval(myVar);
+        $('#submit').click(function(){
+        postImg();
+      });
+      }
+      take_snapshot();
+      count ++;
+    }, 1000);
+
+   async function postImg(){
+      //$.post("http://127.0.0.1:8000/Upload/", {"files": JSON.stringify(imgArr)}, function(result){
+        //console.log(result);
+      //});
+    json = null;
+    await fetch("http://127.0.0.1:8000/Upload/", {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(imgArr)
+  })
+  .then((response) => response.json())
+  .then((responseJSON) => {
+     json = responseJSON;
+
+     return json;
+  }).catch(err =>{
+      json = err;
+      return json;
+  });
+  //Webcam.reset()
+    }
+  });
+    
+    /*$(document).on('Submit','#new_image',function(e){
+
+       
+    });
+    */
+</script>
+ 
+</body>
+</html
